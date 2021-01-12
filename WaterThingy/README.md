@@ -2,9 +2,9 @@
 
 This device will observe an analog water meter and report consumption through MQTT messages. A camera module (ESP-32-CAM) is used to observe one of the rotating arrow in the analog water meter. The device will continiously take pictures, do image analysis and report changes as consumption in liters.
 
-The gauge arrow rotates one lap per 10 liters of consumption. The consumption is calculated from the angular difference between two consecutive images. The camera module is mounted on a 3D-printed camera mount with a standard smart-phone macro lens. Some white leds are connected to provide some light inside the camera mount.
+The water meter contains 4 gauges with different consumptions per lap where the fastest gauge arrow rotates one lap per 10 liters of water usage. The consumption is calculated from the angular difference between two consecutive images. The camera module is mounted on a 3D-printed camera mount with a standard smart-phone macro lens. Some white leds are connected to provide some light inside the camera mount.
 
-![setup](setup.png)
+![setup](setup.png) ![mount](mount.png) ![water meter](vattenmatare.jpeg)
 
 ## Image analysis
 To measure consumption, the angle of a gauge arrow is found by taking an image of the fastes rotating gauge. When the angle has been calculated it is compared with the angle from the previous image result. If the angle has changed, the consumption can be derived from the angular differnce.
