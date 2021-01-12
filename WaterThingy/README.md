@@ -10,25 +10,21 @@ The gauge arrow rotates one lap per 10 liters of consumption. The consumption is
 ![setup](setup.png)
 
 ## Image analysis
-Prepare image for analysis:
-### Step 1
-Fetch image from the camera module (jpeg)
-### Step 2
-Convert to RGB-values  
-![stage1](stage1.png)  
-*The black (empty) pixels in the bottom of the image appears to be due to some hardware issue in the ESP-01-CAM module.*
-### Step 3
-Crop image to configured bounding box.  
-![stage1](stage2.png)
-### Step 4
-Convert to HSL (hue, saturation, lightness ) values. Keeping saturation only.  
-![stage1](stage3.png)
-### Step 5
-With the saturation only image, a filter is rotated around the center of the image. The filter is rotated 1&deg; per iteration.  
-![](stage4.png)  
-*The line is the filter position where the greatest sum was calculated.*
+To measure consumption, the angle of a gauge arrow is found by taking an image of the fastes rotating gauge. When the angle has been calculated it is compared with the angle from the previous image result. If the angle has changed, the consumption can be derived from the angular differnce.
 
-The angle is stored and compared with the previous image result. When the angle is changed, the consumption is calculated.
+
+1. Fetch image from the camera module (jpeg)
+2. Convert to RGB-values  
+   ![stage1](stage1.png)  
+   *The green square is the configured bounding box. (The black pixels in the bottom of the image appears to be due to some hardware issue in the ESP-01-CAM module)*
+3. Crop image to configured bounding box.  
+   ![stage1](stage2.png)
+4. Convert to HSL (hue, saturation, lightness ) values. Keeping saturation only.  
+   ![stage1](stage3.png)
+5. With the saturation only image, a filter is rotated 360&deg; around the center of the image. The filter is rotated 1&deg; per iteration.  
+   ![](stage4.png)  
+   *The line is the filter position where the greatest sum was calculated.*
+
 
 ## MQTT messages
 The WaterThingy will report periodically (about 2 reports per second) to an MQTT broker. The payload is a json string containg the last measured consumption.
@@ -47,16 +43,17 @@ Example:
 
 ## Configure device
 The following parameters can be configured through GET requests:
-`capture_x` : The x coordinate for the upper left corner of the bounding box
-`capture_y` : The y coordinate for the upper left corner of the bounding box
-`capture_size` : The size of the bounding box square in pixels
-`filter_start` : The start position of the filter from the center of the image
-`filter_length` : The lengt of the filter
+`capture_x` : The x coordinate for the upper left corner of the bounding box  
+`capture_y` : The y coordinate for the upper left corner of the bounding box  
+`capture_size` : The size of the bounding box square in pixels  
+`filter_start` : The start position of the filter from the center of the image  
+`filter_length` : The lengt of the filter  
 
-To change a configurable paramtere. A GET request is sent to device
+The paramter value can be set through the route (GET) `/set/{paramter_name}/{value}`
+
 
 Example:
-Set `capture_x` to 120: `GET http://ip_adress/set/capture_x/120`
+Set `capture_x = 120` : `GET http://ip_adress/set/capture_x/120`
 
 ## Project Setup
 - Open root folder in Plaform IO
