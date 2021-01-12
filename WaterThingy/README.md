@@ -11,18 +11,21 @@ The gauge arrow rotates one lap per 10 liters of consumption. The consumption is
 
 ## Image analysis
 Prepare image for analysis:
-1. img_raw = Fetch image from the camera module (jpeg)
-2. Convert to RGB-values
-![stage1](stage1.png)
+### Step 1
+Fetch image from the camera module (jpeg)
+### Step 2
+Convert to RGB-values  
+![stage1](stage1.png)  
 *The black (empty) pixels in the bottom of the image appears to be due to some hardware issue in the ESP-01-CAM module.*
-3. Crop image to configured bounding box.
+### Step 3
+Crop image to configured bounding box.  
 ![stage1](stage2.png)
-4. Convert to HSL (hue, saturation, lightness ) values. Keeping saturation only.
+### Step 4
+Convert to HSL (hue, saturation, lightness ) values. Keeping saturation only.  
 ![stage1](stage3.png)
-
-With the saturation only image, a filter is rotated around the center of the image. The filter is rotated 1&deg; per iteration.
-
-![](stage4.png)
+### Step 5
+With the saturation only image, a filter is rotated around the center of the image. The filter is rotated 1&deg; per iteration.  
+![](stage4.png)  
 *The line is the filter position where the greatest sum was calculated.*
 
 The angle is stored and compared with the previous image result. When the angle is changed, the consumption is calculated.
