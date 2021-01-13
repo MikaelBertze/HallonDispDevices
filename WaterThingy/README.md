@@ -1,13 +1,13 @@
 # WaterThingy
 
-This device will observe an analog water meter and report consumption through MQTT messages. A camera module (ESP-32-CAM) is used to observe one of the rotating arrow in the analog water meter. The device will continiously take pictures, do image analysis and report changes as consumption in liters.
+This device will observe an analog water meter and report consumption through MQTT messages. A camera module (ESP-32-CAM) is used to observe one of the rotating arrows in the analog water meter. The device will continuously take pictures, do image analysis and report changes as consumption in liters.
 
 The water meter contains 4 gauges with different consumptions per lap where the fastest gauge arrow rotates one lap per 10 liters of water usage. The consumption is calculated from the angular difference between two consecutive images. The camera module is mounted on a 3D-printed camera mount with a standard smart-phone macro lens. Some white leds are connected to provide some light inside the camera mount.
 
 ![setup](setup.png) ![mount](mount.png) ![water meter](vattenmatare.jpeg)
 
 ## Image analysis
-To measure consumption, the angle of a gauge arrow is found by taking an image of the fastes rotating gauge. When the angle has been calculated it is compared with the angle from the previous image result. If the angle has changed, the consumption can be derived from the angular differnce.
+To measure consumption, the angle of a gauge arrow is found by taking an image of the fastest rotating gauge. When the angle has been calculated it is compared with the angle from the previous image result. If the angle has changed, the consumption can be derived from the angular difference.
 
 
 1. Fetch image from the camera module (jpeg)
@@ -24,7 +24,7 @@ To measure consumption, the angle of a gauge arrow is found by taking an image o
 
 
 ## MQTT messages
-The WaterThingy will report periodically (about 2 reports per second) to an MQTT broker. The payload is a json string containg the last measured consumption.
+The WaterThingy will report periodically (about 2 reports per second) to an MQTT broker. The payload is a json string containing the last measured consumption.
 
 Example:
 ```
@@ -34,12 +34,12 @@ Example:
     "diff" : 3,                                 <- difference from last measurement 
     "t_diff" : 561,                             <- time since last measurement
     "consumption" : 0.0079792560,               <- calculated consumption since last measurement
-    "acc_consumption" : 9.9687504960            <- accumilated consumption since device start
+    "acc_consumption" : 9.9687504960            <- accumulated consumption since device start
 }
 ```
 
 ## Calibration
-The bounding box must be set such that the center of the observed gauge is positioned in the center. The whole gauge should fit inside the bounding box. The filter shold be set suck that the center circle is ignored while the tip of the gauge arrow is included.
+The bounding box must be set such that the center of the observed gauge is positioned in the center. The whole gauge should fit inside the bounding box. The filter should be set such that the center circle is ignored while the tip of the gauge arrow is included.
 
 The following parameters can be configured through GET requests:
 `capture_x` : The x coordinate for the upper left corner of the bounding box  
@@ -48,7 +48,7 @@ The following parameters can be configured through GET requests:
 `filter_start` : The start position of the filter from the center of the image  
 `filter_length` : The lengt of the filter  
 
-The paramter value can be set through the route (GET) `/set/{paramter_name}/{value}`
+The parameter value can be set through the route (GET) `/set/{paramter_name}/{value}`
 
 
 Example:
