@@ -4,7 +4,7 @@ This device will observe an analog water meter and report consumption through MQ
 
 The water meter contains 4 gauges with different consumptions per lap where the fastest gauge arrow rotates one lap per 10 liters of water usage. The consumption is calculated from the angular difference between two consecutive images. The camera module is mounted on a 3D-printed camera mount with a standard smart-phone macro lens. Some white leds are connected to provide some light inside the camera mount.
 
-![setup](setup.png) ![mount](mount.png) ![water meter](vattenmatare.jpeg)
+![setup](images/setup.png) ![mount](images/mount.png) ![water meter](images/vattenmatare.jpeg)
 
 ## Image analysis
 To measure consumption, the angle of a gauge arrow is found by taking an image of the fastest rotating gauge. When the angle has been calculated it is compared with the angle from the previous image result. If the angle has changed, the consumption can be derived from the angular difference.
@@ -12,14 +12,14 @@ To measure consumption, the angle of a gauge arrow is found by taking an image o
 
 1. Fetch image from the camera module (jpeg)
 2. Convert to RGB-values  
-   ![stage1](stage1.png)  
+   ![stage1](images/stage1.png)  
    *The green square is the configured bounding box. (The black pixels in the bottom of the image appears to be due to some hardware issue in the ESP-01-CAM module)*
 3. Crop image to configured bounding box.  
-   ![stage1](stage2.png)
+   ![stage1](images/stage2.png)
 4. Convert to HSL (hue, saturation, lightness ) values. Keeping saturation only.  
-   ![stage1](stage3.png)
+   ![stage1](images/stage3.png)
 5. With the saturation only image, a filter is rotated 360&deg; around the center of the image. The filter is rotated 1&deg; per iteration.  
-   ![](stage4.png)  
+   ![](images/stage4.png)  
    *The line is the filter position where the greatest filter sum was calculated.*
 
 
