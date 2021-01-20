@@ -28,7 +28,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install --upgrade platformio
     - name: Install library dependencies
-      run: pio lib -g install 54
+      run: |
+        pio lib -g install 54
+        pio lib -g install 89
     - name: Add credentials file
       run: |
         echo 'const char* SSID = "ssid"; const char* password = "passwd"' > ./GarageThingy/src/wifi-credentials.h
