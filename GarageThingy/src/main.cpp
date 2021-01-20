@@ -1,4 +1,4 @@
-#include "wifi-credentials.h"
+#include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WiFiMulti.h>
 #include <ESP8266mDNS.h>  
@@ -7,8 +7,7 @@
 #include <tempreporter.h>
 #include <doorreporter.h>
 #include <powerreporter.h>
-#include <Arduino.h>
-
+#include "wifi-credentials.h"
 
 #define RED_LED D4
 #define BLUE_LED D2
@@ -21,8 +20,6 @@
 #ifndef TOPIC_SPACE
   #error “TOPIC_SPACE not specified. Define this in platform.ini for your target”
 #endif 
-
-
 
 #define DEBOUNCE_MS 50
 volatile long lastDebounceTime = 0;
@@ -45,7 +42,6 @@ long tempReportLastSend = 0;
 long doorReportLastSend = 0;
 long powerReportLastSend = 0;
 
-
 void reboot() {
   ledControl.RebootSignal();
   ESP.restart();
@@ -65,12 +61,10 @@ void handleInterrupt() {
   if(debounce) return;
 
   powerReporter.SetTickPeriod(timeNow - lastTick);
-  
   lastTick = timeNow;
 }
 
 void verifyWifi() {
-
   if (WiFi.status() == WL_CONNECTED)
     return;
   
@@ -100,12 +94,15 @@ void verifyWifi() {
 
 void setup() {
   ledControl.InitLeds();
-  
   Serial.begin(9600);
-  Serial.setDebugOutput(true);
+  //Serial.setDebugOutput(true);
   delay(10);
-  Serial.println("\n\n\n\n");
-  Serial.println("setting up...");
+  Serial.println("\nsetting up...");
+
+  ledControl.SetBlue(true);
+  ledControl.SetRed(false);
+  ledControl.SetGreen(false);
+
   tempReporter
     .SetBrokerUrl(mqtt_server)
     .SetUSer("hallondisp")
@@ -133,10 +130,7 @@ void setup() {
   Serial.println(SSID);
   Serial.println(password);
   verifyWifi();
-  
   ledControl.SetBlue(false);
-  ledControl.SetRed(false);
-  ledControl.SetGreen(false);
     
   if(!tempReporter.connect() || !doorReporter.connect() || !powerReporter.connect())
   {
@@ -146,7 +140,7 @@ void setup() {
   
   attachInterrupt(digitalPinToInterrupt(powerReporter.GetTickPin()), handleInterrupt, FALLING);
   
-   if (!MDNS.begin(IOT_ID)) {             // Start the mDNS responder for esp8266.local
+  if (!MDNS.begin(IOT_ID)) { 
     Serial.println("Error setting up MDNS responder!");
   }
   Serial.println("mDNS responder started");
