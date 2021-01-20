@@ -29,6 +29,6 @@ jobs:
         pip install --upgrade platformio
     - name: Add credentials file
       run: |
-        echo 'const char* SSID = "ssid";\nconst char* password = "passwd"' > ./GarageThingy/wifi-credentials.h
+        echo 'const char* SSID = "ssid";\nconst char* password = "passwd"' > ./GarageThingy/src/wifi-credentials.h
     - name: Run PlatformIO
       run: pio run -d ./GarageThingy
