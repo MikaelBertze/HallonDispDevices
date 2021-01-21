@@ -15,14 +15,13 @@
 
 #define MSG_BUFFER_SIZE 100
 
-  struct mqttConfig {
-      const char* broker;
-      const char* topic;
-      const char* id;
-      const char* user;
-      const char* pass;
-    };
-
+struct mqttConfig {
+    const char* broker;
+    const char* topic;
+    const char* id;
+    const char* user;
+    const char* pass;
+};
 
 class MqttReporter {
   public:
@@ -84,8 +83,6 @@ class MqttReporter {
       snprintf (msg, MSG_BUFFER_SIZE, message.c_str());
       client_.publish(config_.topic, msg);
     }
-
-    
 
   private:
     mqttConfig config_;

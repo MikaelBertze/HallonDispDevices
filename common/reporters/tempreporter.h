@@ -22,5 +22,4 @@ class TempReporter : public MqttReporter {
         String id_;
         OneWire oneWire_;
         DallasTemperature tempSensor_; 
-        
 };

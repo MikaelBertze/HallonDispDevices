@@ -3,13 +3,10 @@
 
 class DoorReporter : public MqttReporter {
     public:
-        //TempReporter(byte pin, mqttConfig mqtt_config, WiFiClient* espClient) 
         DoorReporter(byte *doorpins, String *doorNames, byte numDoors)
           : MqttReporter(), pins_(doorpins), doorNames_(doorNames), numDoors_(numDoors)
         { 
           for (byte i = 0; i < numDoors; i++) {
-            //  pins_[i] = doorpins[i];
-            //  doorNames_[i] = doorNames_[i];
             if (pins_[i] >= 0)
               pinMode(pins_[i], INPUT);
           }     
@@ -24,7 +21,6 @@ class DoorReporter : public MqttReporter {
             }
           }
           return state;
-
         }
 
     private:

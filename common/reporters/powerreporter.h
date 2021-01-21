@@ -3,7 +3,6 @@
 
 class PowerReporter : public MqttReporter {
     public:
-        //TempReporter(byte pin, mqttConfig mqtt_config, WiFiClient* espClient) 
         PowerReporter(byte pin, String id) 
           : MqttReporter(), pin_(pin), id_(id) 
         {
