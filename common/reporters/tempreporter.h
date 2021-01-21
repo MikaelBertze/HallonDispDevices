@@ -15,7 +15,7 @@ class TempReporter : public MqttReporter {
           tempSensor_.requestTemperatures();
           float temp = tempSensor_.getTempCByIndex(0);
           Serial.println(temp);
-          report("{ \"id\" : \"" + id_ + "\", \"temp\" : \"" + String(temp,1) + "\"}");
+          report("{ \"id\" : \"" + id_ + "\", \"temp\" : " + String(temp,1) + " }");
         }
 
     private:

@@ -1,17 +1,11 @@
+#include "credentials.h"
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
-#include <ESP8266WiFiMulti.h>
 #include <ESP8266mDNS.h>  
 #include <ArduinoOTA.h>
 #include <ledcontrol.h>
 #include <tempreporter.h>
 #include <doorreporter.h>
-#include <powerreporter.h>
-#include "credentials.h"
-
-#define RED_LED D4
-#define BLUE_LED D2
-#define GREEN_LED D3
 
 #ifndef IOT_ID
   #error “IOT_ID not specified. Define this in platform.ini for your target”
@@ -21,52 +15,39 @@
   #error “TOPIC_SPACE not specified. Define this in platform.ini for your target”
 #endif 
 
-#define DEBOUNCE_MS 50
-volatile long lastDebounceTime = 0;
+#ifndef NUM_DOORS
+  #error “NUM_DOORS not specified. Define this in platform.ini for your target”
+#endif 
+
+#define RED_LED D4
+#define BLUE_LED D2
+#define GREEN_LED D3
+
+byte doors[] = DOOR_PINS;
+String doornames[] = {DOOR_NAMES};
+
 volatile long lastTick = -1;
 
 const char* mqtt_server = BROKER;
 //const char* mqtt_garage_id = "garageThingy1";
 const char* mqtt_temp_id = IOT_ID "_temp";
 const char* mqtt_door_id = IOT_ID "_door";
-const char* mqtt_power_id = IOT_ID "_power";
 
-
-ESP8266WiFiMulti WiFiMulti;
 LedControl ledControl(RED_LED, GREEN_LED, BLUE_LED, false);
-TempReporter tempReporter(D1, IOT_ID);
-byte doors[] = {D6};
-String doornames[] = {"garage"};
-DoorReporter doorReporter(doors, doornames, 1);
-PowerReporter powerReporter(D5, IOT_ID);
+TempReporter tempReporter(TEMP_PIN, IOT_ID);
+DoorReporter doorReporter(doors, doornames, NUM_DOORS);
 
 long tempReportLastSend = 0;
 long doorReportLastSend = 0;
-long powerReportLastSend = 0;
+
 
 void reboot() {
   ledControl.RebootSignal();
   ESP.restart();
 }
 
-void ICACHE_RAM_ATTR handleInterrupt ();
-
-void handleInterrupt() {
-  // Check to see if the change is within a debounce delay threshold.
-  boolean debounce = (millis() - lastDebounceTime) <= DEBOUNCE_MS;
-
-  long timeNow = millis();
-  // This update to the last debounce check is necessary regardless of debounce state.
-  lastDebounceTime = timeNow;
-
-  // Ignore reads within a debounce delay threshold.
-  if(debounce) return;
-
-  powerReporter.SetTickPeriod(timeNow - lastTick);
-  lastTick = timeNow;
-}
-
 void verifyWifi() {
+
   if (WiFi.status() == WL_CONNECTED)
     return;
   
@@ -99,11 +80,8 @@ void setup() {
   Serial.begin(9600);
   //Serial.setDebugOutput(true);
   delay(10);
-  Serial.println("\nsetting up...");
-
-  ledControl.SetBlue(true);
-  ledControl.SetRed(false);
-  ledControl.SetGreen(false);
+  Serial.println("\n\n\n\n");
+  Serial.println("setting up...");
 
   tempReporter
     .SetBrokerUrl(mqtt_server)
@@ -119,12 +97,6 @@ void setup() {
     .SetTopic(TOPIC_SPACE "door")
     .SetId(mqtt_door_id);
 
-  powerReporter
-    .SetBrokerUrl(mqtt_server)
-    .SetUSer(MQTT_user)
-    .SetPass(MQTT_password)
-    .SetTopic(TOPIC_SPACE "power")
-    .SetId(mqtt_power_id);
 
   WiFi.mode(WIFI_STA);
   WiFi.setPhyMode(WIFI_PHY_MODE_11G);
@@ -132,17 +104,28 @@ void setup() {
   Serial.println(SSID);
   Serial.println(password);
   verifyWifi();
-  ledControl.SetBlue(false);
+  
+  ledControl.SetBlue(true);
+  ledControl.SetRed(true);
+  ledControl.SetGreen(true);
     
-  if(!tempReporter.connect() || !doorReporter.connect() || !powerReporter.connect())
+  for(byte i = 0; i < 10; i++){
+    delay(50);
+    ledControl.ToggleBlue();
+    ledControl.ToggleRed();
+    ledControl.ToggleGreen();
+  }
+  ledControl.SetBlue(false);
+  ledControl.SetRed(false);
+  ledControl.SetGreen(false);
+    
+  if(!tempReporter.connect() || !doorReporter.connect())
   {
     Serial.println("Could not connect to broker. restarting...");
     reboot();
   }
   
-  attachInterrupt(digitalPinToInterrupt(powerReporter.GetTickPin()), handleInterrupt, FALLING);
-  
-  if (!MDNS.begin(IOT_ID)) { 
+  if (!MDNS.begin(IOT_ID)) {             // Start the mDNS responder for esp8266.local
     Serial.println("Error setting up MDNS responder!");
   }
   Serial.println("mDNS responder started");
@@ -152,36 +135,31 @@ void setup() {
 
 void handleTempReporter() {
   tempReporter.reconnectingLoop();
-  //garageReporter.report("Door!");
   long t = (millis() - tempReportLastSend) / 1000;
   if (t >= 10) {
     Serial.println("Sending temp report");
     tempReporter.Report();
+
     tempReportLastSend = millis();
   }
 }
 
-void handleDoorReporter() {
+void handleDoorReporters() {
   doorReporter.reconnectingLoop();
   long t = (millis() - doorReportLastSend) / 1000;
   if (t >= 10) {
     Serial.println("Sending door report");
     bool state = doorReporter.Report();
-    ledControl.SetRed(!state);
+    ledControl.SetRed(state);
     doorReportLastSend = millis();
   }
 
-}
-void handlePowerReporter() {
-  powerReporter.reconnectingLoop();
-  powerReporter.Report();
 }
 
 void loop() {
   verifyWifi();
   handleTempReporter();  
-  handleDoorReporter();
-  handlePowerReporter();
+  handleDoorReporters();
   MDNS.update();
   ArduinoOTA.handle();
 }
