@@ -33,6 +33,6 @@ jobs:
         pio lib -g install 89
     - name: Add credentials file
       run: |
-        cp ./GarageThingy/src/credentials.template /GarageThingy/src/credentials.h
+        cp ./GarageThingy/src/credentials.template ./GarageThingy/src/credentials.h
     - name: Run PlatformIO
       run: pio run -d ./GarageThingy
