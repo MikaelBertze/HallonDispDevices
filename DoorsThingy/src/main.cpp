@@ -28,7 +28,6 @@ String doornames[] = {DOOR_NAMES};
 
 volatile long lastTick = -1;
 
-const char* mqtt_server = BROKER;
 //const char* mqtt_garage_id = "garageThingy1";
 const char* mqtt_temp_id = IOT_ID "_temp";
 const char* mqtt_door_id = IOT_ID "_door";
@@ -84,14 +83,14 @@ void setup() {
   Serial.println("setting up...");
 
   tempReporter
-    .SetBrokerUrl(mqtt_server)
+    .SetBrokerUrl(MQTT_broker)
     .SetUSer(MQTT_user)
     .SetPass(MQTT_password)
     .SetTopic(TOPIC_SPACE "temperature")
     .SetId(mqtt_temp_id);
 
   doorReporter
-    .SetBrokerUrl(mqtt_server)
+    .SetBrokerUrl(MQTT_broker)
     .SetUSer(MQTT_user)
     .SetPass(MQTT_password)
     .SetTopic(TOPIC_SPACE "door")
