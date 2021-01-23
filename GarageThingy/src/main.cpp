@@ -17,9 +17,9 @@
   #error “IOT_ID not specified. Define this in platform.ini for your target”
 #endif 
 
-#ifndef TOPIC_SPACE
-  #error “TOPIC_SPACE not specified. Define this in platform.ini for your target”
-#endif 
+// #ifndef TOPIC_SPACE
+//   #error “TOPIC_SPACE not specified. Define this in platform.ini for your target”
+// #endif 
 
 #define DEBOUNCE_MS 50
 volatile long lastDebounceTime = 0;
@@ -33,7 +33,7 @@ const char* mqtt_power_id = IOT_ID "_power";
 
 ESP8266WiFiMulti WiFiMulti;
 LedControl ledControl(RED_LED, GREEN_LED, BLUE_LED, false);
-TempReporter tempReporter(D1, IOT_ID);
+TempReporter tempReporter(D1, D0, IOT_ID);
 byte doors[] = {D6};
 String doornames[] = {"garage"};
 DoorReporter doorReporter(doors, doornames, 1);
@@ -108,21 +108,21 @@ void setup() {
     .SetBrokerUrl(MQTT_broker)
     .SetUSer(MQTT_user)
     .SetPass(MQTT_password)
-    .SetTopic(TOPIC_SPACE "temperature")
+    .SetTopic(TEMP_TOPIC)
     .SetId(mqtt_temp_id);
 
   doorReporter
     .SetBrokerUrl(MQTT_broker)
     .SetUSer(MQTT_user)
     .SetPass(MQTT_password)
-    .SetTopic(TOPIC_SPACE "door")
+    .SetTopic(DOOR_TOPIC)
     .SetId(mqtt_door_id);
 
   powerReporter
     .SetBrokerUrl(MQTT_broker)
     .SetUSer(MQTT_user)
     .SetPass(MQTT_password)
-    .SetTopic(TOPIC_SPACE "power")
+    .SetTopic(POWER_TOPIC)
     .SetId(mqtt_power_id);
 
   WiFi.mode(WIFI_STA);
