@@ -154,8 +154,6 @@ void configureWebServer() {
         content += (result != 0) ? String("Error: ") + String(result) : "Success";
         content += "\n\nParameter: " + parameter + "\n";
         content += "Value: " + String(value) + "\n";
-        
-        
         content += "\nCurrent settings\n--------------";
         content += config_paramaters_string();
         request->send(200, "text/plain", content);
