@@ -13,8 +13,6 @@
 #error "This ain't a ESP8266 or ESP32!"
 #endif
 
-#define MSG_BUFFER_SIZE 100
-
 struct mqttConfig {
     const char* broker;
     const char* topic;
@@ -30,7 +28,9 @@ class MqttReporter {
       client_.setServer(config_.broker, 1883);
       if (client_.connect(config_.id, config_.user, config_.pass)) {
          Serial.println("connected to broker");
-         client_.publish("/megatron/IoT_status", "CONNECTED!");
+         char buf[50];
+         sprintf(buf, "New connection: %s", config_.id);
+         client_.publish("IoT_status", buf);
          return true;
       } 
       else {
@@ -79,8 +79,8 @@ class MqttReporter {
     }
     
     void report(String message) {
-      char msg[MSG_BUFFER_SIZE];
-      snprintf (msg, MSG_BUFFER_SIZE, message.c_str());
+      char msg[message.length() + 1];
+      snprintf (msg, message.length() + 1, message.c_str());
       client_.publish(config_.topic, msg);
     }
 
