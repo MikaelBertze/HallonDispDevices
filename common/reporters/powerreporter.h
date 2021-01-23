@@ -11,11 +11,17 @@ class PowerReporter : public MqttReporter {
 
         void SetTickPeriod(long tickPeriod){
           currentTickPeriod = tickPeriod;
+          newData = true;
         }
 
         void Report() {
           if (currentTickPeriod != lastSentTickPeriod) {
-            report("{ \"id\" : \"" + id_ + "\", \"power_tick_period\" : " + currentTickPeriod + " }");
+            // each tick correspond to 1Wh consumed
+            // calculating mean effect for this period
+            // tickperiod [ms] => effect = 3600 * 1000 / tickperiod
+            float mean_effect = (float)3600000 / currentTickPeriod;
+
+            report("{ \"id\" : \"" + id_ + "\", \"mean_effect\" : " + String(mean_effect, 1) + ", \"power_tick_period\" : " + currentTickPeriod + " }");
             lastSentTickPeriod = currentTickPeriod;
           }
         }
@@ -29,5 +35,5 @@ class PowerReporter : public MqttReporter {
         String id_;
         int currentTickPeriod;
         int lastSentTickPeriod;
-        
+        bool newData = false;
 };
