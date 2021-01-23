@@ -14,12 +14,20 @@ class DoorReporter : public MqttReporter {
 
         bool Report() {
           bool state = false;
+          String message = "[ ";
+          bool first = true;
           for (byte i = 0; i < numDoors_; i++) {
             if (pins_[i] >= 0) {
+              if (!first)
+                message += ", ";
+              else
+                first = false;
               state = digitalRead(pins_[i]);
-              report("{ \"id\" : \"" + doorNames_[i] + "\", \"door\" : " + (state ? "true" : "false") + "}");
+              message += "{ \"id\" : \"" + doorNames_[i] + "\", \"door\" : " + (state ? "true" : "false") + "}";
             }
           }
+          message += " ]";
+          report(message);
           return state;
         }
 
