@@ -1,4 +1,4 @@
-name: GarageThingy build
+name: WaterThingy build
 
 on: [push]
 
@@ -31,4 +31,4 @@ jobs:
       run: |
         cp ./WaterThingy/src/credentials.template ./WaterThingy/src/credentials.h
     - name: Run PlatformIO
-      run: pio run -d ./GarageThingy
+      run: pio run -d ./WaterThingy
