@@ -27,12 +27,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install --upgrade platformio
-    - name: Install library dependencies
-      run: |
-        # DallasTemperature
-        pio lib -g install 54
-        # PubSubClient
-        pio lib -g install 89
     - name: Add credentials file
       run: |
         cp ./DoorsThingy/src/credentials.template ./DoorsThingy/src/credentials.h
