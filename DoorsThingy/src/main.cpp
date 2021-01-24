@@ -11,10 +11,6 @@
   #error “IOT_ID not specified. Define this in platform.ini for your target”
 #endif 
 
-#ifndef TOPIC_SPACE
-  #error “TOPIC_SPACE not specified. Define this in platform.ini for your target”
-#endif 
-
 #ifndef NUM_DOORS
   #error “NUM_DOORS not specified. Define this in platform.ini for your target”
 #endif 
@@ -33,7 +29,7 @@ const char* mqtt_temp_id = IOT_ID "_temp";
 const char* mqtt_door_id = IOT_ID "_door";
 
 LedControl ledControl(RED_LED, GREEN_LED, BLUE_LED, false);
-TempReporter tempReporter(TEMP_PIN, IOT_ID);
+TempReporter tempReporter(TEMP_PIN, D0, IOT_ID);
 DoorReporter doorReporter(doors, doornames, NUM_DOORS);
 
 long tempReportLastSend = 0;
@@ -86,14 +82,14 @@ void setup() {
     .SetBrokerUrl(MQTT_broker)
     .SetUSer(MQTT_user)
     .SetPass(MQTT_password)
-    .SetTopic(TOPIC_SPACE "temperature")
+    .SetTopic(TEMP_TOPIC)
     .SetId(mqtt_temp_id);
 
   doorReporter
     .SetBrokerUrl(MQTT_broker)
     .SetUSer(MQTT_user)
     .SetPass(MQTT_password)
-    .SetTopic(TOPIC_SPACE "door")
+    .SetTopic(DOORS_TOPIC)
     .SetId(mqtt_door_id);
 
 
