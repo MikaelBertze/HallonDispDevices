@@ -11,7 +11,19 @@ The TempThingy will report periodically to a MQTT broker. The payload is a json 
 Example:
 `{ "id" : "Garage", "temp": 12.5 }`
 
-## Configure device
-After first programming, the device will be configured to use the default id `tempthingy`. To set a new ID , browse to http://tempthingy.local/configure and follow the instructions. The device id is stored in the microcontroller EEPROM and will be persistant until a new configuration is done. 
-
-
+## Project Setup
+- Open the `TempThingy` directory in Plaform IO
+- Add the file `credentials.h` to the `src` folder and define WiFi and MQTT creadentials.
+  Template:
+  ```
+  // WIFI
+  const char* SSID = "SSID";
+  const char* password = "SuperSecretPassword";
+  
+  // MQTT
+  const char* MQTT_broker = "breoker.url";
+  const char* MQTT_user = "username";
+  const char* MQTT_password = "password";
+  ```
+- Define the build parameter in `platformio.ini`
+- Build and program device
